@@ -1,0 +1,5 @@
+Bowling Scores:
+Game 1: 210
+Game 2: 195
+Game 3: 250
+Average Score: 218.33333333333334
