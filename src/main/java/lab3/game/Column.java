@@ -4,9 +4,7 @@ package lab3.game;
  * Enum representing the columns of the TicTacToe board.
  */
 public enum Column {
-    LEFT,
-    MIDDLE,
-    RIGHT;
+    LEFT, MIDDLE, RIGHT;
 
     /**
      * Parses a string into a Column enum value.

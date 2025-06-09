@@ -4,9 +4,7 @@ package lab3.game;
  * Enum representing the rows of the TicTacToe board.
  */
 public enum Row {
-    TOP,
-    MIDDLE,
-    BOTTOM;
+    TOP, MIDDLE, BOTTOM;
 
     /**
      * Parses a string into a Row enum value.

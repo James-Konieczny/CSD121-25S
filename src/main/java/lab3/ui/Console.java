@@ -41,7 +41,7 @@ public class Console {
 
     /**
      * Prints the current game board to the console.
-     * @param boardString the string representation of the board
+     * @param boardStr the string representation of the board
      */
     public void printBoard(String boardStr) {
         System.out.println(boardStr);
