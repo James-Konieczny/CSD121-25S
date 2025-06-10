@@ -5,7 +5,6 @@ package lab3;
 // TODO: Check if the game is over or a draw, and if so display the result and exit
 // TODO: Get the next move from the player and update the game state
 
-import java.lang.reflect.Array;
 import lab3.game.Board;
 import lab3.ui.Console;
 import lab3.game.Position;

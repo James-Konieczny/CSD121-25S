@@ -17,7 +17,7 @@ public enum Row {
      */
     public static Row parse(String input) {
         input = input.trim().toLowerCase();
-        return switch (input) {
+        return switch (input) { // added full string cases (top, middle, center, bottom) - not in instructions, but thought it was a good idea
             case "1", "t", "top" -> TOP;
             case "2", "m", "c", "middle", "center" -> MIDDLE;
             case "3", "b", "bottom" -> BOTTOM;

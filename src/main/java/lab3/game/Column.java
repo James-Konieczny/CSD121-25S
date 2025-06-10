@@ -17,7 +17,7 @@ public enum Column {
      */
     public static Column parse(String input) {
         input = input.trim().toLowerCase();
-        return switch (input) {
+        return switch (input) { // added full string cases (left, middle, center, right) - not in instructions, but thought it was a good idea
             case "1", "l", "left" -> LEFT;
             case "2", "m", "c", "middle", "center" -> MIDDLE;
             case "3", "r", "right" -> RIGHT;
