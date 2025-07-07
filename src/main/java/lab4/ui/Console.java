@@ -1,6 +1,8 @@
 package lab4.ui;
 
 import lab4.game.*;
+import com.diogonunes.jcolor.Ansi;
+import static com.diogonunes.jcolor.Attribute.*;
 
 import java.util.Scanner;
 
@@ -10,7 +12,7 @@ import java.util.Scanner;
 public class Console {
 
     public static void println(String message) {
-        System.out.println(message);
+        System.out.println(Ansi.colorize(message, GREEN_TEXT()));
     }
 
     /**
@@ -19,7 +21,7 @@ public class Console {
      * @return The user's response
      */
     public static String prompt(String promptMessage) {
-        System.out.print(promptMessage);
+        System.out.print(Ansi.colorize(promptMessage, BLUE_TEXT()));
         var scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
@@ -46,18 +48,18 @@ public class Console {
         final String helpMessage = "Input must be in the format 'row column', e.g., '1 2' or 't m' for the top middle cell.";
 
         while ( true ) {
-            System.out.print(prompt);
+            System.out.print(Ansi.colorize(prompt, BLUE_TEXT()));
             var input = scanner.nextLine().trim();
 
             if ( input.length() != 3 ) {
-                System.out.println(helpMessage);
+                System.out.println(Ansi.colorize(helpMessage, RED_TEXT(), BOLD()));
                 continue;
             }
 
             var parts = input.split(" ");
 
             if ( parts.length != 2 ) {
-                System.out.println(helpMessage);
+                System.out.println(Ansi.colorize(helpMessage, RED_TEXT(), BOLD()));
                 continue;
             }
 
@@ -67,13 +69,13 @@ public class Console {
                 var pos = new Position(Row.from(parts[0]), Col.from(parts[1]));
 
                 if (board.isOccupiedAt(pos)) {
-                    System.out.println("That position is already taken.");
+                    System.out.println(Ansi.colorize("That position is already taken.", RED_TEXT(), BOLD()));
                     continue;
                 }
 
                 return pos;
             } catch ( IllegalArgumentException e ) {
-                System.out.println(helpMessage);
+                System.out.println(Ansi.colorize(helpMessage, RED_TEXT(), BOLD()));
             }
         }
     }
