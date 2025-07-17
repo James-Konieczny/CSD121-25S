@@ -1,0 +1,4 @@
+2.5. You can change the returned value to HumanPlayer without changing the return type (Player) because polymorphism allows a subclass (HumanPlayer) to be treated as its superclass (Player). The method signature guarantees the caller receives a Player, and since HumanPlayer is a subtype, it satisfies this contract while retaining its specific behavior.
+
+2.9. The error occurs because whoseTurn (declared as Player) no longer had access to pickNextMove() after moving the method to HumanPlayer. Adding an abstract method to Player fixes this because it forces all subclasses (like HumanPlayer) to implement pickNextMove(). The compiler knows any concrete Player will have this method, even if the exact implementation isn’t known yet.
+At runtime, Java uses polymorphism to call the correct subclass’s method based on the actual object type (e.g., HumanPlayer).

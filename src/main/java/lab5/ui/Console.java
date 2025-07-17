@@ -60,7 +60,7 @@ public class Console {
                     default -> printAlert("TODO: Implement computer players");
                 }
             } else {
-                return new Player(input);
+                return new HumanPlayer(input);
             }
         }
     }
