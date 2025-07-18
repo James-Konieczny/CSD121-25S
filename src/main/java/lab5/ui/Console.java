@@ -3,8 +3,8 @@ package lab5.ui;
 import com.diogonunes.jcolor.AnsiFormat;
 import lab5.game.*;
 import lab5.players.Player;
-import tictactoe.game.*;
-import tictactoe.players.*;
+import lab5.game.*;
+import lab5.players.*;
 
 import java.util.Scanner;
 
@@ -57,10 +57,17 @@ public class Console {
                 switch ( input ) {
                     // E.g.
                     // case "randy" -> { return new Randy(); }
+                    case "randy" -> {
+                        return new Randy();
+                    }
+                    case "omola" -> {
+                        return new Omola();
+                    }
+
                     default -> printAlert("TODO: Implement computer players");
                 }
             } else {
-                return new Player(input);
+                return new HumanPlayer(input);
             }
         }
     }

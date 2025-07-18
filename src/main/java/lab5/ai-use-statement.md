@@ -1,0 +1,2 @@
+I used ChatGPT to complete this lab, and my conversations are linked below. I also used the Copilot inline auto completions to complete this lab.
+https://chatgpt.com/share/687a77ba-e84c-800b-9e03-7f03b0142a6b
