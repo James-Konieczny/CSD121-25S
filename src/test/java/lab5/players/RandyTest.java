@@ -18,6 +18,10 @@ import java.util.Map;
  */
 public class RandyTest {
 
+    /**
+     * Tests that Randy never picks an occupied position on the board.
+     * Runs the test 100 times to ensure statistical confidence.
+     */
     @Test
     void testRandyOnlyPicksEmptyPositions() {
         // Arrange
@@ -32,6 +36,12 @@ public class RandyTest {
         }
     }
 
+    /**
+     * Tests that Randy selects all empty positions with approximately equal probability
+     * on an empty board.
+     * <p>
+     * Each of the 9 positions should be picked ~11% of the time, with a 10% margin of error.
+     */
     @Test
     void testRandyPicksAllPositionsWithEqualProbability() {
         // Arrange
@@ -66,6 +76,10 @@ public class RandyTest {
             );
         }
     }
+    /**
+     * Tests that Randy throws an IndexOutOfBoundsException when the board is full
+     * and there are no valid moves left.
+     */
     @Test
     void testRandyOnFullBoard() {
         Board fullBoard = new Board("XOXOXOXOX");
@@ -73,7 +87,10 @@ public class RandyTest {
         assertThrows(IndexOutOfBoundsException.class,
                 () -> randy.pickNextMove(fullBoard));
     }
-
+    /**
+     * Tests that Randy correctly chooses from the only two remaining empty positions
+     * when the board is nearly full.
+     */
     @Test
     void testRandyOnNearFullBoard() {
         Board board = new Board("XOXOXOX  ");
