@@ -60,6 +60,9 @@ public class Console {
                     case "randy" -> {
                         return new Randy();
                     }
+                    case "omola" -> {
+                        return new Omola();
+                    }
 
                     default -> printAlert("TODO: Implement computer players");
                 }

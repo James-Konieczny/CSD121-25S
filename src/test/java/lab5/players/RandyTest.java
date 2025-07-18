@@ -5,9 +5,9 @@ import lab5.game.Position;
 import lab5.game.Row;
 import lab5.game.Col;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the Randy computer player.
