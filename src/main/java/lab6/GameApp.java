@@ -4,50 +4,68 @@ import javafx.application.Application;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
 
 public class GameApp extends Application{
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
 
-    private Pane gameRoot = new Pane();
+    private final Pane gameRoot = new Pane();
     private Player player;
+
+    private long lastUpdateTime = 0;
 
     @Override
     public void start(Stage primaryStage) {
-        System.out.println("Starting game..."); // Debug line
-
         player = new Player();
-        System.out.println("Player sprite loaded: " + player.getSprite().getImage()); // Debug
-
         gameRoot.getChildren().add(player.getSprite());
+        gameRoot.setFocusTraversable(true);
 
-        // Debug position
-        player.getSprite().setTranslateX(100); // Temporary fixed position
-        player.getSprite().setTranslateY(100);
-        System.out.println("Sprite position: " + player.getSprite().getTranslateX() + "," +
-                player.getSprite().getTranslateY());
-
+        Pane root = new Pane();
         Scene scene = new Scene(gameRoot, WIDTH, HEIGHT);
-        scene.setFill(Color.WHITE); // Make background black to contrast
         primaryStage.setScene(scene);
+        setupInput(primaryStage.getScene());
         primaryStage.show();
-
-        System.out.println("Window shown"); // Debug
 
         createGameLoop();
     }
+
     private void createGameLoop() {
         new AnimationTimer() {
+
             @Override
             public void handle(long now) {
-                update();
+                if (lastUpdateTime == 0) {
+                    lastUpdateTime = now;
+                    return;
+                }
+                double deltaTime = (now - lastUpdateTime) / 1000000000.0;
+                lastUpdateTime = now;
+                player.update(deltaTime);
             }
         }.start();
     }
 
-    private void update() {
-        player.update();
+    private void setupInput(Scene scene){
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.SPACE) {
+                player.jump();
+            } else if (event.getCode() == KeyCode.RIGHT) {
+                player.move(1);
+            } else if (event.getCode() == KeyCode.LEFT) {
+                player.move(-1);
+            }
+        });
+
+        scene.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT) {
+                player.move(0);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
