@@ -2,16 +2,17 @@ package lab6;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
-import javafx.scene.control.Button;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
+/**
+ * The Game class manages the core logic, user interface, and animation
+ * of a simple 2D side-scrolling JavaFX game.
+ * It handles player input, game state, obstacles, and collision detection.
+ */
 public class Game {
     private final Pane root = new Pane();
     private final Scene scene = new Scene(root, 800, 600);
@@ -22,70 +23,38 @@ public class Game {
     private int obstaclesJumped = 0;
 
     // UI Elements
-    private List<Heart> heartIcons = new ArrayList<>();
-    private Text scoreText;
-    private Button startButton;
-    private Text gameOverText;
-    private Text finalScoreText;
-    private Button restartButton;
+    private final UIManager uiManager = new UIManager();
 
     // Obstacles
-    private List<Obstacle> obstacles = new ArrayList<>();
+    private final List<Obstacle> obstacles = new ArrayList<>();
     private double obstacleTimer = 0;
-    private Random random = new Random();
+    private final Random random = new Random();
 
+    /**
+     * Returns whether the game is currently running.
+     *
+     * @return true if the game is running, false otherwise
+     */
     public boolean isGameRunning() {
         return gameRunning;
     }
 
+    /**
+     * Constructs the Game object and sets up initial UI and input.
+     * Initializes event handlers for buttons and resets the game.
+     */
     public Game() {
-        createUI();
+        root.getChildren().add(uiManager.createUI(scene.getWidth(), scene.getHeight()));
+        uiManager.getStartButton().setOnAction(e -> startGame());
+        uiManager.getRestartButton().setOnAction(e -> resetGame());
         resetGame();
         new InputHandler(scene, player, this);
     }
 
-    private void createUI() {
-        for (int i = 0; i < 5; i++) {
-            Heart heart = new Heart(true);
-            heart.setTranslateX(10 + i * 35);
-            heart.setTranslateY(10);
-            heartIcons.add(heart);
-            root.getChildren().add(heart);
-        }
-
-        scoreText = new Text("Obstacles: 0");
-        scoreText.setTranslateX(700);
-        scoreText.setTranslateY(30);
-        root.getChildren().add(scoreText);
-
-        startButton = new Button("Start");
-        startButton.setLayoutX(350);
-        startButton.setLayoutY(300);
-        startButton.setOnAction(e -> startGame());
-        root.getChildren().add(startButton);
-
-        gameOverText = new Text("Game Over");
-        gameOverText.setStyle("-fx-font-size: 40; -fx-fill: red;");
-        gameOverText.setVisible(false);
-        gameOverText.setTranslateX(300);
-        gameOverText.setTranslateY(250);
-        root.getChildren().add(gameOverText);
-
-        finalScoreText = new Text();
-        finalScoreText.setStyle("-fx-font-size: 24;");
-        finalScoreText.setVisible(false);
-        finalScoreText.setTranslateX(320);
-        finalScoreText.setTranslateY(300);
-        root.getChildren().add(finalScoreText);
-
-        restartButton = new Button("RESTART");
-        restartButton.setLayoutX(350);
-        restartButton.setLayoutY(350);
-        restartButton.setVisible(false);
-        restartButton.setOnAction(e -> resetGame());
-        root.getChildren().add(restartButton);
-    }
-
+    /**
+     * Resets the game to its initial state.
+     * Clears obstacles, resets player and hearts, and shows the start screen.
+     */
     private void resetGame() {
         gameRunning = false;
         hearts = 5;
@@ -96,50 +65,87 @@ public class Game {
         player = new Player();
         root.getChildren().add(player.getSprite());
 
-        new InputHandler(scene, player, this);
-
-        updateHearts();
-        updateScore();
-        startButton.setVisible(true);
-        gameOverText.setVisible(false);
-        finalScoreText.setVisible(false);
-        restartButton.setVisible(false);
-
         for (Obstacle obstacle : obstacles) {
             root.getChildren().remove(obstacle);
         }
         obstacles.clear();
+
+        uiManager.updateHearts(hearts);
+        uiManager.updateScore(obstaclesJumped);
+        uiManager.hideGameOver();
+        uiManager.showStartScreen();
+
+        new InputHandler(scene, player, this);
     }
 
+    /**
+     * Starts the game and hides the start screen.
+     */
     void startGame() {
         gameRunning = true;
-        startButton.setVisible(false);
+        uiManager.hideStartScreen();
     }
 
+    /**
+     * Ends the game, clears obstacles, and shows the game-over screen.
+     */
     private void gameOver() {
         gameRunning = false;
-        gameOverText.setVisible(true);
-        finalScoreText.setText("Score: " + obstaclesJumped);
-        finalScoreText.setVisible(true);
-        restartButton.setVisible(true);
-    }
+        uiManager.showGameOver(obstaclesJumped);
 
-    private void updateHearts() {
-        for (int i = 0; i < 5; i++) {
-            heartIcons.get(i).setImage(new Image(Objects.requireNonNull(AssetLoader.class.getResourceAsStream(
-                    i < hearts ? "/sprites/fullheart.png" : "/sprites/emptyheart.png"
-            ))));
+        for (int i = obstacles.size() - 1; i >= 0; i--) {
+            Obstacle obstacle = obstacles.get(i);
+            root.getChildren().remove(obstacle);
+            obstacles.remove(i);
         }
     }
 
-    private void updateScore() {
-        scoreText.setText("Obstacles: " + obstaclesJumped);
-    }
-
+    /**
+     * Returns the JavaFX scene associated with this game.
+     *
+     * @return the game scene
+     */
     public Scene getScene() {
         return scene;
     }
 
+    /**
+     * Generates a new obstacle and places it on the screen.
+     * Randomly chooses between a Block and a Spike.
+     */
+    private void generateObstacle() {
+        Obstacle obstacle = random.nextBoolean() ?
+                new Block(200) : new Spike(200); // 200 = speed
+
+        obstacle.setTranslateX(850); // Start just off-screen to the right
+        obstacle.setTranslateY(425 - obstacle.getFitHeight()); // Ground level, minus obstacle height
+
+        obstacles.add(obstacle);
+        root.getChildren().add(obstacle);
+    }
+
+    /**
+     * Handles collision between the player and an obstacle.
+     * Reduces the player's hearts and ends the game if hearts reach zero.
+     *
+     * @param obstacle the obstacle that the player collided with
+     */
+    private void handleCollision(Obstacle obstacle) {
+        root.getChildren().remove(obstacle);
+        obstacles.remove(obstacle);
+
+        hearts--;
+        uiManager.updateHearts(hearts);
+
+        if (hearts <= 0) {
+            gameOver();
+        }
+    }
+
+    /**
+     * Starts the game loop using an AnimationTimer.
+     * Handles obstacle spawning, player movement, and collision detection.
+     */
     public void start() {
         lastTime = System.nanoTime() / 1e9;
         double sceneWidth = scene.getWidth();
@@ -176,7 +182,7 @@ public class Game {
                                 obstacle.getTranslateX() < player.getSprite().getTranslateX()) {
                             obstacle.markPassed();
                             obstaclesJumped++;
-                            updateScore();
+                            uiManager.updateScore(obstaclesJumped);
                         }
                         // Check collision
                         else if (player.collidesWith(obstacle)) {
@@ -187,26 +193,5 @@ public class Game {
             }
         };
         timer.start();
-    }
-    private void generateObstacle() {
-        Obstacle obstacle = random.nextBoolean() ?
-                new Block(200) : new Spike(200); // 200 = speed
-
-        obstacle.setTranslateX(850); // Start just off-screen to the right
-        obstacle.setTranslateY(400 - obstacle.getFitHeight()); // Ground level
-
-        obstacles.add(obstacle);
-        root.getChildren().add(obstacle);
-    }
-    private void handleCollision(Obstacle obstacle) {
-        root.getChildren().remove(obstacle);
-        obstacles.remove(obstacle);
-
-        hearts--;
-        updateHearts();
-
-        if (hearts <= 0) {
-            gameOver();
-        }
     }
 }

@@ -3,25 +3,28 @@ package lab6;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Represents a heart icon used for displaying player health.
+ */
 public class Heart extends ImageView {
+    private static final Image FULL_HEART = AssetLoader.load("fullheart.png");
+    private static final Image EMPTY_HEART = AssetLoader.load("emptyheart.png");
+
+    /**
+     * Constructs a Heart icon, either full or empty.
+     * @param full whether the heart is full
+     */
     public Heart(boolean full) {
-        try {
-            String imagePath = full ? "/sprites/fullheart.png" : "/sprites/emptyheart.png";
-            Image image = new Image(getClass().getResourceAsStream(imagePath));
+        super(full ? FULL_HEART : EMPTY_HEART);
+        setFitWidth(30);
+        setFitHeight(30);
+    }
 
-            if (image.isError()) {
-                throw new RuntimeException("Failed to load heart image: " + imagePath);
-            }
-
-            setImage(image);
-            setFitWidth(30);
-            setFitHeight(30);
-        } catch (NullPointerException e) {
-            System.err.println("Heart image not found! Check your resources folder.");
-            // Create a placeholder
-            setFitWidth(30);
-            setFitHeight(30);
-            setStyle("-fx-background-color: " + (full ? "red" : "gray") + ";");
-        }
+    /**
+     * Sets the heart to full or empty.
+     * @param full true to display a full heart, false for empty
+     */
+    public void setFull(boolean full) {
+        setImage(full ? FULL_HEART : EMPTY_HEART);
     }
 }

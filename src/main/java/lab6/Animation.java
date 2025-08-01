@@ -4,6 +4,10 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
+/**
+ * The Animation class controls frame-based sprite animations using a sprite sheet.
+ * It changes the visible portion of an image (viewport) over time to create motion.
+ */
 public class Animation {
     private final ImageView sprite;
     private final Image spriteSheet;
@@ -16,6 +20,17 @@ public class Animation {
     private int currentFrame = 0;
     private double elapsedTime = 0;
 
+    /**
+     * Constructs an Animation with the specified parameters.
+     *
+     * @param sprite        The ImageView that will display the animation.
+     * @param spriteSheet   The sprite sheet image with all animation frames.
+     * @param frameWidth    The width of each frame in the sprite sheet.
+     * @param frameHeight   The height of each frame in the sprite sheet.
+     * @param frameCount    The total number of frames in the animation.
+     * @param frameDuration The duration (in seconds) of each frame.
+     * @param loop          Whether the animation should repeat after finishing.
+     */
     public Animation(ImageView sprite, Image spriteSheet, double frameWidth, double frameHeight, int frameCount, double frameDuration, boolean loop) {
         this.sprite = sprite;
         this.spriteSheet = spriteSheet;
@@ -29,6 +44,12 @@ public class Animation {
         updateViewport();
     }
 
+    /**
+     * Updates the animation based on the time since the last frame.
+     * If enough time has passed, it advances to the next frame.
+     *
+     * @param deltaTime Time (in seconds) since the last update call.
+     */
     public void update(double deltaTime) {
         if (!loop && currentFrame == frameCount -1) {
             return;
@@ -47,6 +68,10 @@ public class Animation {
         }
     }
 
+    /**
+     * Resets the animation to the first frame and restarts timing.
+     * Useful when changing the animation state (e.g., from idle to jump).
+     */
     public void reset() {
         sprite.setImage(spriteSheet);
         currentFrame = 0;
@@ -54,6 +79,10 @@ public class Animation {
         updateViewport();
     }
 
+    /**
+     * Calculates and sets the visible portion (viewport) of the sprite image
+     * based on the current frame.
+     */
     private void updateViewport() {
         // Calculate the X position of the current frame
         double x = currentFrame * frameWidth;
