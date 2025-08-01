@@ -14,3 +14,6 @@
 - I edited the user, background with:
 - https://www.piskelapp.com/
 - I also created the obstacles and hearts using the same program
+
+- I also had to google things, I had a lot of issues at the start trying to get pom.xml to work
+- and to get maven to work on my macbook, I jumped through many hoops to do it (downloaded Homebrew, but my laptop is too old for it. downloaded MacPort, finally able to get maven... or at least an older version)
