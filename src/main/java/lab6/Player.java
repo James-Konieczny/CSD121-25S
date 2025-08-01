@@ -4,7 +4,10 @@ import javafx.scene.image.ImageView;
 
 public class Player {
     private final ImageView sprite = new ImageView();
-    private Animation idleAnim, runAnim, jumpAnim, fallAnim;
+    private final Animation idleAnim;
+    private final Animation runAnim;
+    private final Animation jumpAnim;
+    private final Animation fallAnim;
     private State state = State.IDLE;
 
     private double velocityY = 0;
@@ -12,30 +15,47 @@ public class Player {
     private boolean movingLeft = false;
     private boolean movingRight = false;
 
+    public static final double WIDTH = 32;
+    public static final double HEIGHT = 32;
+
     public Player() {
-        double width = 32, height = 32;
-        idleAnim = new Animation(sprite, AssetLoader.load("idle.png"), width, height, 4, 0.15, true);
-        runAnim = new Animation(sprite, AssetLoader.load("run.png"), width, height, 6, 0.1, true);
-        jumpAnim = new Animation(sprite, AssetLoader.load("jump.png"), width, height, 1, 0.2, false);
-        fallAnim = new Animation(sprite, AssetLoader.load("fall.png"), width, height, 2, 0.2, false);
-        setState(State.IDLE);
+        idleAnim = new Animation(sprite, AssetLoader.load("idle.png"), WIDTH, HEIGHT, 3, 0.15, true);
+        runAnim = new Animation(sprite, AssetLoader.load("run.png"), WIDTH, HEIGHT, 3, 0.1, true);
+        jumpAnim = new Animation(sprite, AssetLoader.load("jump.png"), WIDTH, HEIGHT, 4, 0.2, false);
+        fallAnim = new Animation(sprite, AssetLoader.load("fall.png"), WIDTH, HEIGHT, 3, 0.1, false);
+        setState(State.FALLING);
         sprite.setTranslateX(100);
-        sprite.setTranslateY(400);
+        sprite.setTranslateY(200);
     }
 
     public ImageView getSprite() {
         return sprite;
     }
 
-    public void update(double deltaTime) {
+    public void update(double deltaTime, double sceneWidth, double sceneHeight) {
         double gravity = 1000;
         velocityY += gravity * deltaTime;
         sprite.setTranslateY(sprite.getTranslateY() + velocityY * deltaTime);
+
+        double currentY = sprite.getTranslateY();
+        double currentX = sprite.getTranslateX();
+
+        if (currentX < 0) {
+            sprite.setTranslateX(0);
+        } else if (currentX > sceneWidth - WIDTH) {
+            sprite.setTranslateX(sceneWidth - WIDTH);
+        }
+
+        if  (currentY < 0) {
+            sprite.setTranslateY(0);
+            velocityY = 0;
+        }
 
         if (sprite.getTranslateY() >= 400) {
             sprite.setTranslateY(400);
             velocityY = 0;
             isOnGround = true;
+
             setState(isMoving() ? State.RUNNING : State.IDLE);
         } else {
             isOnGround = false;
@@ -73,6 +93,10 @@ public class Player {
         return movingLeft || movingRight;
     }
 
+    public boolean collidesWith(Obstacle obstacle) {
+        return sprite.getBoundsInParent().intersects(obstacle.getBoundsInParent());
+    }
+
     private void setState(State newState) {
         if (state != newState) {
             state = newState;
@@ -89,113 +113,3 @@ public class Player {
         };
     }
 }
-//    private enum State { IDLE, RUNNING, JUMPING, FALLING }
-//
-//    private final ImageView sprite;
-//    private State currentState = State.IDLE;
-//
-//    // Animation objects
-//    private final Animation idleAnimation;
-//    private final Animation runAnimation;
-//    private final Animation jumpAnimation;
-//    private final Animation fallingAnimation;
-//
-//    // Physics
-//    private double velocityY = 0;
-//    private boolean isOnGround = true;
-//
-//    public Player() {
-//        Image idleSheet = loadImage("/sprites/idle.png");
-//        Image runSheet = loadImage("/sprites/run.png");
-//        Image jumpSheet = loadImage("/sprites/jump.png");
-//        Image fallSheet = loadImage("/sprites/fall.png");
-//
-//        this.sprite = new ImageView(idleSheet);
-//        // sprite width
-//        double frameWidth = 32;
-//        // sprite height
-//        double frameHeight = 32;
-//        this.sprite.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
-//
-//        this.idleAnimation = new Animation(sprite, idleSheet, frameWidth, frameHeight, 3, 0.1, true);
-//        this.runAnimation = new Animation(sprite, runSheet, frameWidth, frameHeight, 3, 0.08, true);
-//        this.jumpAnimation = new Animation(sprite, jumpSheet, frameWidth, frameHeight, 3, 0.06, true);
-//        this.fallingAnimation = new Animation(sprite, fallSheet, frameWidth, frameHeight, 3, 0.06, false);
-//    }
-//
-//    private Image loadImage(String path) {
-//        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
-//        if (img.isError()) {
-//            throw new RuntimeException("Failed to load: " + path);
-//        }
-//        return img;
-//    }
-//
-//    public void update(double deltaTime) {
-//        double gravity = 1000;
-//        velocityY += gravity * deltaTime;
-//        sprite.setTranslateY(sprite.getTranslateY() + velocityY *  deltaTime); // Move the sprite vertically
-//
-//        // Landing check
-//        if (sprite.getTranslateY() >= 400) {
-//            sprite.setTranslateY(400);
-//            velocityY = 0;
-//            isOnGround = true;
-//
-//            if (isMoving()) {
-//                setState(State.RUNNING);
-//            } else {
-//                setState(State.IDLE);
-//            }
-//        } else {
-//            isOnGround = false;
-//            if (velocityY < 0) {
-//                setState(State.JUMPING);
-//            } else {
-//                setState(State.FALLING);
-//            }
-//        }
-//
-//        getCurrentAnimation().update(deltaTime);
-//    }
-//
-//    public void move(double direction) {
-//        double newX = Math.round(sprite.getTranslateX() + direction * 5);
-//        sprite.setTranslateX(newX);
-//        if (direction != 0) {
-//            sprite.setScaleX(direction > 0 ? 1 : -1);
-//        }
-//    }
-//
-//    private boolean isMoving() {
-//        return sprite.getTranslateX() != 0;
-//    }
-//
-//    public void jump() {
-//        if (isOnGround) {
-//            velocityY = -500;
-//            isOnGround = false;
-//            setState(State.JUMPING);
-//        }
-//    }
-//
-//    private void setState(State newState) {
-//        if (currentState != newState) {
-//            currentState = newState;
-//            getCurrentAnimation().reset();
-//        }
-//    }
-//
-//    private Animation getCurrentAnimation() {
-//        return switch (currentState) {
-//            case RUNNING -> runAnimation;
-//            case JUMPING -> jumpAnimation;
-//            case FALLING -> fallingAnimation;
-//            default -> idleAnimation;
-//        };
-//    }
-//
-//    public ImageView getSprite() {
-//        return sprite;
-//    }
-//}
