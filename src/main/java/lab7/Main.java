@@ -35,10 +35,10 @@ public class Main {
      */
     public static List<Recipe> searchRecipes(String searchTerm, DataService dataService) {
         try {
-            // 1.3 Get all recipes from the data service
+            // Get all recipes from the data service
             List<Recipe> allRecipes = dataService.getRecipes();
 
-            // 1.3.1 & 1.3.2 Filter recipes where name or description contains the term (case-insensitive)
+            // Filter recipes where name or description contains the term (case-insensitive)
             return allRecipes.stream()
                     .filter(recipe ->
                             recipe.name().toLowerCase().contains(searchTerm.toLowerCase()) ||
@@ -46,7 +46,7 @@ public class Main {
                     .toList();
 
         } catch(Exception e) {
-            // 1.4 Log errors and return empty list
+            // Log errors and return empty list
             logger.error("Error while searching recipes: " + e.getMessage());
             logger.debug("Stack trace: " + Arrays.toString(e.getStackTrace()));
             return List.of();
